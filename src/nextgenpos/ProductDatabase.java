@@ -2,30 +2,30 @@ package nextgenpos;
 
 import java.sql.SQLException;
 
-public class UserDatabase extends Database{
+public class ProductDatabase extends Database{
 
 	private String table;
 	
-	public UserDatabase(String table){
+	public ProductDatabase(String table){
 		this.table = table;
 	}
 	
-	public UserDatabase(String u, String p, String database, String table){
+	public ProductDatabase(String u, String p, String database, String table){
 		super(u, p, database);
 		this.table = table;
 	}
 	
-	public User getWhere(String where, String value){
-		User u = null;
+	public Product getWhere(String where, String value){
+		Product u = null;
 		setConnection();
 		
 		try{
-			String query = "SELECT * " + this.table;
+			String query = "SELECT * FROM " + this.table;
 			query += " WHERE " + where + " = '" + value + "'";
 			rs = st.executeQuery(query);
 			
 			if(rs.next()){
-				u = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				u = new Product(rs.getInt(1), rs.getString(3), rs.getInt(4), rs.getDouble(5), rs.getDouble(6));
 			}
 		} catch(SQLException e){
 			System.out.println(e.getMessage());

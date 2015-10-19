@@ -72,4 +72,8 @@ public class Product {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	
+	public String toString(){
+		return id + ", " + barcode + ", " + name + ", " + vendorId + ", " + quantity + ", " + price;
+	}
 }

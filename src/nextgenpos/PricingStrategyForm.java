@@ -178,35 +178,35 @@ public class PricingStrategyForm extends javax.swing.JFrame {
     private void set_strategyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_set_strategyActionPerformed
         if(percent_strategy.isSelected()){
             this.p = Double.parseDouble(percent.getValue().toString());
-            UI.active_strategy = 1;
+            POSWindow.active_strategy = 1;
         }
         
         else if(no_strategy.isSelected()){
-            UI.active_strategy = 0;
+            POSWindow.active_strategy = 0;
         }
         
         else if(threshold_strategy.isSelected()){
             this.t = Double.parseDouble(threshold.getValue().toString());
             this.d = Double.parseDouble(discount.getValue().toString());
-            UI.active_strategy = 2;
+            POSWindow.active_strategy = 2;
         }
         
         else if(best_shop.isSelected()){
             this.p = Double.parseDouble(percent.getValue().toString());
             this.t = Double.parseDouble(threshold.getValue().toString());
             this.d = Double.parseDouble(discount.getValue().toString());
-            UI.active_strategy = 3;
+            POSWindow.active_strategy = 3;
         }
         
         else if(best_customer.isSelected()){
             this.p = Double.parseDouble(percent.getValue().toString());
             this.t = Double.parseDouble(threshold.getValue().toString());
             this.d = Double.parseDouble(discount.getValue().toString());
-            UI.active_strategy = 4;
+            POSWindow.active_strategy = 4;
         }
         
         else{
-            UI.active_strategy = 0;
+            POSWindow.active_strategy = 0;
         }
         
         this.setVisible(false);

@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-
 import javax.swing.*;
 
 public class LoginWindow extends JFrame implements ActionListener{
@@ -98,9 +97,5 @@ public class LoginWindow extends JFrame implements ActionListener{
 			System.out.println(e.getMessage());
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) {
-		new LoginWindow();
 	}
 }
