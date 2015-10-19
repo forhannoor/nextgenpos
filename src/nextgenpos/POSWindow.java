@@ -3,7 +3,6 @@ package nextgenpos;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 public class POSWindow extends JFrame implements ActionListener{
@@ -38,8 +37,15 @@ public class POSWindow extends JFrame implements ActionListener{
 		bottomThirdColumn.setLayout(new GridLayout(4, 2));
 		
 		// initialize top panel component
-		salesLine = new JTable();
-		top.add(salesLine);
+		salesLine = new JTable(16, 5);
+		salesLine.getTableHeader().getColumnModel().getColumn(0).setHeaderValue("#");
+		salesLine.getTableHeader().getColumnModel().getColumn(1).setHeaderValue("Product");
+		salesLine.getTableHeader().getColumnModel().getColumn(2).setHeaderValue("Vendor");
+		salesLine.getTableHeader().getColumnModel().getColumn(3).setHeaderValue("Quantity");
+		salesLine.getTableHeader().getColumnModel().getColumn(4).setHeaderValue("Subtotal");
+		JScrollPane pane = new JScrollPane(salesLine);
+		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		top.add(pane);
 		
 		// initialize first column of bottom panel
 		start = new JButton("Start Sale");
