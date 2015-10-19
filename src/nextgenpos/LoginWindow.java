@@ -57,6 +57,17 @@ public class LoginWindow extends JFrame implements ActionListener{
 		if(e.getSource() == login){ // login button action
 			String u = username.getText();
 			String p = String.valueOf(password.getPassword());
+			
+			if(u.length() > 0 && p.length() > 0){ // input for both fields are present
+				p = encryptPassword(p);
+				Database db = new Database("root", "", "nextgenpos");
+				
+				
+			}
+			
+			else{
+				JOptionPane.showMessageDialog(null, "Both username and password are required");
+			}
 		}
 	}
 	
