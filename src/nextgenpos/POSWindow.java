@@ -3,7 +3,9 @@ package nextgenpos;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class POSWindow extends JFrame implements ActionListener{
 	
@@ -37,14 +39,31 @@ public class POSWindow extends JFrame implements ActionListener{
 		bottomThirdColumn.setLayout(new GridLayout(4, 2));
 		
 		// initialize top panel component
-		salesLine = new JTable(16, 5);
+		salesLine = new JTable(200, 5);
+		
+		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		salesLine.getTableHeader().getColumnModel().getColumn(0).setHeaderValue("#");
+		salesLine.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(10);
+		salesLine.getTableHeader().getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		salesLine.getTableHeader().getColumnModel().getColumn(1).setHeaderValue("Product");
+		salesLine.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(360);
+		salesLine.getTableHeader().getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 		salesLine.getTableHeader().getColumnModel().getColumn(2).setHeaderValue("Vendor");
+		salesLine.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(160);
+		salesLine.getTableHeader().getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 		salesLine.getTableHeader().getColumnModel().getColumn(3).setHeaderValue("Quantity");
+		salesLine.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(50);
+		salesLine.getTableHeader().getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
 		salesLine.getTableHeader().getColumnModel().getColumn(4).setHeaderValue("Subtotal");
+		salesLine.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(100);
+		salesLine.getTableHeader().getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+		
 		JScrollPane pane = new JScrollPane(salesLine);
-		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		top.add(pane);
 		
 		// initialize first column of bottom panel

@@ -1,6 +1,6 @@
 package nextgenpos;
 
-public class AbsoluteDiscountOverThresholdPricingStrategy implements SalePricingStrategy{
+public class AbsoluteDiscountOverThresholdPricingStrategy implements Discount{
     private double discount;
     private double threshold;
     
