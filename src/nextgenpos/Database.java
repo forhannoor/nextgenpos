@@ -6,10 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
-public class DB {
+public class Database {
     private String user;
     private String password;
     private Connection con;
@@ -18,19 +18,77 @@ public class DB {
     private String url;
     private PreparedStatement ps;
     
-    public DB(String u, String p){
+    public Database(String u, String p, String database){
         user = u;
         password = p;
         con = null;
         st = null;
         rs = null;
-        url = "jdbc:mysql://localhost/pos";
+        url = "jdbc:mysql://localhost/" + database;
         ps = null;
     }
     
+    public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Connection getCon() {
+		return con;
+	}
+
+	public void setCon(Connection con) {
+		this.con = con;
+	}
+
+	public Statement getSt() {
+		return st;
+	}
+
+	public void setSt(Statement st) {
+		this.st = st;
+	}
+
+	public ResultSet getRs() {
+		return rs;
+	}
+
+	public void setRs(ResultSet rs) {
+		this.rs = rs;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public PreparedStatement getPs() {
+		return ps;
+	}
+
+	public void setPs(PreparedStatement ps) {
+		this.ps = ps;
+	}
+
+	// establish connection
     public void setConnection(){
         try {
             this.con = DriverManager.getConnection(url, user, password);
+            this.st = this.con.createStatement();
         } catch(SQLException se){
             System.out.println(se.getMessage());
         }
@@ -40,9 +98,7 @@ public class DB {
         String result = null;
         
         try{
-            this.setConnection();
-            this.st = this.con.createStatement();
-            String q = "SELECT password from POS.USERS where username = ";
+            String q = "SELECT password from nextgenpos.users where username = ";
             q +="'";
             q += username;
             q +="'";
@@ -59,6 +115,7 @@ public class DB {
         return result;
     }
     
+    // terminate connection
     public void closeConnection(){
         try {
             if (this.rs != null) {
@@ -72,11 +129,10 @@ public class DB {
             }
             
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB.class.getName());
-            lgr.log(Level.WARNING, ex.getMessage(), ex);
+            System.out.println(ex.getMessage());
         }
     }
-    
+    /*
     public void getProducts(){
         String result = null;
         Product x;
@@ -129,4 +185,5 @@ public class DB {
             this.closeConnection();
         }
     }
+    */
 }

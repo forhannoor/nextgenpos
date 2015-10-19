@@ -539,7 +539,7 @@ public class UI extends javax.swing.JFrame {
             double discount = Double.parseDouble(total.getText()) -Double.parseDouble(total_after_discount.getText());
             discount_amount.setText(Double.toString(discount));
             this.s.setTotal(t);
-            DB db = new DB("root", "");
+            Database db = new Database("root", "");
             db.saveSale(this.s);
             this.s = null;
         } catch(NullPointerException npe){
@@ -562,7 +562,7 @@ public class UI extends javax.swing.JFrame {
         total.setText("0.0");
         this.clearInputFields();
         //Product.initializeProducts();   /* generate product list */
-        DB db = new DB("root", "");
+        Database db = new Database("root", "");
         db.getProducts();
     }//GEN-LAST:event_new_buttonActionPerformed
 
@@ -651,7 +651,7 @@ public class UI extends javax.swing.JFrame {
 
     private void product_menu_add_form_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_menu_add_form_addActionPerformed
         try{
-          DB db = new DB("root", "");
+          Database db = new Database("root", "");
           db.addProduct(new Product("", product_menu_add_form_name.getText(), product_menu_add_form_brand.getText(), Integer.parseInt(product_menu_add_form_quantity.getText()), Double.parseDouble(product_menu_add_form_price.getText())));
           product_menu_add_form_name.setText(null);
           product_menu_add_form_brand.setText(null);
