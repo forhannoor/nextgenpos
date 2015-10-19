@@ -60,13 +60,29 @@ public class LoginWindow extends JFrame implements ActionListener{
 			
 			if(u.length() > 0 && p.length() > 0){ // input for both fields are present
 				p = encryptPassword(p);
-				Database db = new Database("root", "", "nextgenpos");
+				UserDatabase ub = new UserDatabase("users");
+				User found = ub.getWhere("username", u);
 				
+				if(found != null){ // record exists for username
+					if(found.getPassword().equals(p)){ // password matches
+						JOptionPane.showMessageDialog(null, "Login Successful!");
+					}
+					
+					else{ // password doesn't match
+						JOptionPane.showMessageDialog(null, "Invalid credential! Please try again.");
+						password.setText("");
+					}
+				}
 				
+				else{ // record doesn't exist
+					JOptionPane.showMessageDialog(null, "Invalid credential. Please try again.");
+					username.setText("");
+					password.setText("");
+				}
 			}
 			
 			else{
-				JOptionPane.showMessageDialog(null, "Both username and password are required");
+				JOptionPane.showMessageDialog(null, "Both username and password are required!");
 			}
 		}
 	}

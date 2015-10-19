@@ -2,40 +2,37 @@ package nextgenpos;
 
 import java.sql.SQLException;
 
-public class UserDatabase {
+public class UserDatabase extends Database{
 
-	private Database db;
 	private String table;
 	
-	public UserDatabase(Database db, String table){
-		this.db = db;
+	public UserDatabase(String table){
+		this.table = table;
+	}
+	
+	public UserDatabase(String u, String p, String database, String table){
+		super(u, p, database);
 		this.table = table;
 	}
 	
 	public User getWhere(String where, String value){
 		User u = null;
-		db.setConnection();
+		setConnection();
 		
 		try{
 			String query = "SELECT id, username, password, lastLogin FROM " + this.table;
 			query += " WHERE " + where + " = '" + value + "'";
-			db.setRs(db.getSt().executeQuery(query));
+			rs = st.executeQuery(query);
 			
-			if(db.getRs().next()){
-				u = new User(db.getRs().getInt(1), db.getRs().getString(2), db.getRs().getString(3), db.getRs().getString(4));
+			if(rs.next()){
+				u = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
 			}
 		} catch(SQLException e){
 			System.out.println(e.getMessage());
 		} finally{
-			this.db.closeConnection();
+			closeConnection();
 		}
 		
 		return u;
-	}
-	
-	public static void main(String[] args) {
-		Database d = new Database("root", "", "nextgenpos");
-		UserDatabase u = new UserDatabase(d, "users");
-		System.out.println(u.getWhere("username", "forhan"));
 	}
 }

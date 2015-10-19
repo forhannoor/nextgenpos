@@ -8,13 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Database {
-    private String user;
-    private String password;
-    private Connection con;
-    private Statement st;
-    private ResultSet rs;
-    private String url;
-    private PreparedStatement ps;
+    protected String user;
+    protected String password;
+    protected Connection con;
+    protected Statement st;
+    protected ResultSet rs;
+    protected String url;
+    protected PreparedStatement ps;
     
     public Database(String u, String p, String database){
         user = u;
@@ -26,61 +26,15 @@ public class Database {
         ps = null;
     }
     
-    public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Connection getCon() {
-		return con;
-	}
-
-	public void setCon(Connection con) {
-		this.con = con;
-	}
-
-	public Statement getSt() {
-		return st;
-	}
-
-	public void setSt(Statement st) {
-		this.st = st;
-	}
-
-	public ResultSet getRs() {
-		return rs;
-	}
-
-	public void setRs(ResultSet rs) {
-		this.rs = rs;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public PreparedStatement getPs() {
-		return ps;
-	}
-
-	public void setPs(PreparedStatement ps) {
-		this.ps = ps;
-	}
+    public Database(){
+        user = "root";
+        password = "";
+        con = null;
+        st = null;
+        rs = null;
+        url = "jdbc:mysql://localhost/nextgenpos";
+        ps = null;
+    }
 
 	// establish connection
     public void setConnection(){
