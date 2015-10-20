@@ -3,8 +3,9 @@ package nextgenpos;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileWriter;
-
+import java.util.Scanner;
 import javax.swing.*;
 
 public class DiscountWindow extends JFrame implements ActionListener{
@@ -101,7 +102,27 @@ public class DiscountWindow extends JFrame implements ActionListener{
 		}
 	}
 	
-	public static void main(String[] args) {
-		new DiscountWindow();
+	public static Discount getStrategy(){
+		Discount d = null;
+		
+		try {
+			Scanner s = new Scanner(new File("asset/data/discount.config"));
+			String content = s.nextLine();
+			
+			if(content.equals("percentage")){
+				double rate = Double.parseDouble(s.nextLine());
+				d = new PercentageDiscount(rate);
+			}
+			
+			else if(content.equals("threshold")){
+				double t = Double.parseDouble(s.nextLine());
+				double dis = Double.parseDouble(s.nextLine());
+				d = new ThresholdDiscount(t, dis);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return d;
 	}
 }
