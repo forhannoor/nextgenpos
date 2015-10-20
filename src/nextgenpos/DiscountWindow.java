@@ -54,7 +54,7 @@ public class DiscountWindow extends JFrame implements ActionListener{
 		setTitle("Discount Window");
 		setVisible(true);
 		setLocation(400, 50);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	public void actionPerformed(ActionEvent e) {

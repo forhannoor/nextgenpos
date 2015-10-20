@@ -31,6 +31,14 @@ public class POSWindow extends JFrame implements ActionListener{
 	public POSWindow(){
 		setLayout(new GridLayout(2, 1, 0, 5)); // frame layout
 		
+		menubar = new JMenuBar();
+		option = new JMenu("Option");
+		discountItem = new JMenuItem("Discount Strategy");
+		discountItem.addActionListener(this);
+		option.add(discountItem);
+		menubar.add(option);
+		setJMenuBar(menubar);
+		
 		JPanel top = new JPanel(); // contains sales line
 		top.setLayout(new GridLayout(1, 1));
 		JPanel bottom = new JPanel(); // contains 3 more panels
@@ -131,7 +139,9 @@ public class POSWindow extends JFrame implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e){
-		
+		if(e.getSource() == discountItem){
+			new DiscountWindow();
+		}
 	}
 	
 	public static void main(String[] args) {
