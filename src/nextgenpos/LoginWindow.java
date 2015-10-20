@@ -25,7 +25,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 		right.setLayout(new GridLayout(5, 1, 0, 5));
 		
 		// add logo to left panel
-		ImageIcon i = new ImageIcon("asset/user.png");
+		ImageIcon i = new ImageIcon("asset/images/user.png");
 		JLabel logo = new JLabel(i);
 		left.add(logo);
 		

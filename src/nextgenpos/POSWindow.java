@@ -9,6 +9,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class POSWindow extends JFrame implements ActionListener{
 	
+	private JMenuBar menubar;
+	private JMenu option;
+	private JMenuItem discountItem;
+	
 	private JTable salesLine;
 	
 	private JTextField barcode;
