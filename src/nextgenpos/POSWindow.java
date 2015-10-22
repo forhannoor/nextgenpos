@@ -31,10 +31,13 @@ public class POSWindow extends JFrame implements ActionListener{
 	private ProductDatabase productDatabase;
 	private SaleConduct saleConduct;
 	
+	private int salesLineRowCount;
+	
 	public POSWindow(){
 		saleConduct = new SaleConduct(); // object that contains product and saleslineitem list
 		productDatabase = new ProductDatabase("products");
 		saleConduct.setProducts(productDatabase.getAll());
+		salesLineRowCount = 0;
 		
 		setLayout(new GridLayout(2, 1, 0, 5)); // frame layout
 		
@@ -153,6 +156,7 @@ public class POSWindow extends JFrame implements ActionListener{
 		
 		else if(e.getSource() == start){ // START button action
 			saleConduct.setStrategy(DiscountWindow.getStrategy()); // get discount strategy
+			setSalesLineRowCount(0);
 		}
 		
 		else if(e.getSource() == add){ // ADD button action
@@ -160,7 +164,16 @@ public class POSWindow extends JFrame implements ActionListener{
 				Product temp = productDatabase.getWhere("barcode", barcode.getText());
 				
 				if(temp != null){ // barcode matches with product in database
-					System.out.println(temp);
+					// add product to saleslineitem list
+					SalesLineItem sli = new SalesLineItem(temp, Double.parseDouble(quantity.getValue().toString()));
+					saleConduct.addSalesLineItem(sli);
+					// display saleslineitem to salesline
+					salesLine.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0); // #
+					salesLine.setValueAt(sli.getProduct().getName(), salesLineRowCount, 1); // name
+					salesLine.setValueAt(sli.getProduct().getVendorId(), salesLineRowCount, 2); // vendor
+					salesLine.setValueAt(sli.getQuantity(), salesLineRowCount, 3); // quantity
+					salesLine.setValueAt(sli.getSubTotal(), salesLineRowCount, 4); // subtotal
+					salesLineRowCount += 1;
 				}
 				
 				else{ // barcode doesn't match with product in database
@@ -181,6 +194,14 @@ public class POSWindow extends JFrame implements ActionListener{
 		return saleConduct;
 	}
 	
+	public int getSalesLineRowCount() {
+		return salesLineRowCount;
+	}
+
+	public void setSalesLineRowCount(int salesLineRowCount) {
+		this.salesLineRowCount = salesLineRowCount;
+	}
+
 	public static void main(String[] args) {
 		new POSWindow();
 	}

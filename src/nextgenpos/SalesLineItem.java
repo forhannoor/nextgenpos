@@ -1,29 +1,29 @@
 package nextgenpos;
 
 public class SalesLineItem {
-    private Product p;
-    private int quantity;
+    private Product product;
+    private double quantity;
     private double subTotal;
 	
-    public SalesLineItem(Product p, int quantity) {
-		this.p = p;
+    public SalesLineItem(Product p, double quantity) {
+		this.product = p;
 		this.quantity = quantity;
 		this.subTotal = p.getPrice() * quantity;
 	}
 
-	public Product getP() {
-		return p;
+	public Product getProduct() {
+		return product;
 	}
 
-	public void setP(Product p) {
-		this.p = p;
+	public void setProduct(Product p) {
+		this.product = p;
 	}
 
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 

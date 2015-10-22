@@ -31,6 +31,14 @@ public class SaleConduct {
 	public ArrayList<SalesLineItem> getSalesLineItems() {
 		return salesLineItems;
 	}
+	
+	public void clearSalesLineItems(){
+		salesLineItems.clear();
+	}
+	
+	public void addSalesLineItem(SalesLineItem sli){
+		salesLineItems.add(sli);
+	}
 
 	public Discount getStrategy() {
 		return strategy;

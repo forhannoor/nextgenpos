@@ -32,9 +32,13 @@ public class DiscountWindow extends JFrame implements ActionListener{
 		bg.add(percentageStrategy);
 		bg.add(thresholdStrategy);
 		
-		percentage = new JSpinner();
-		threshold = new JSpinner();
-		discount = new JSpinner();
+		SpinnerModel percentageModel = new SpinnerNumberModel(0, 0, 100, 0.5);
+		SpinnerModel thresholdModel = new SpinnerNumberModel(0, 0, 1000000, 0.5);
+		SpinnerModel discountModel = new SpinnerNumberModel(0, 0, 1000000, 0.5);
+		
+		percentage = new JSpinner(percentageModel);
+		threshold = new JSpinner(thresholdModel);
+		discount = new JSpinner(discountModel);
 		
 		set = new JButton("Set");
 		set.addActionListener(this);
@@ -73,6 +77,7 @@ public class DiscountWindow extends JFrame implements ActionListener{
 			}
 			
 			setStrategy(d);
+			dispose();
 		}
 	}
 	
