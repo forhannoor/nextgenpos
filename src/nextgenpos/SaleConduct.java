@@ -13,6 +13,11 @@ public class SaleConduct {
     	salesLineItems = new ArrayList<SalesLineItem>();
     }
     
+    public SaleConduct(){
+    	products = new ArrayList<Product>();
+    	salesLineItems = new ArrayList<SalesLineItem>();
+    }
+    
     public void setProducts(ArrayList<Product> records){
     	for(Product p: records){
     		products.add(p);

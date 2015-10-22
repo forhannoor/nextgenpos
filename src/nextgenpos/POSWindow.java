@@ -28,7 +28,14 @@ public class POSWindow extends JFrame implements ActionListener{
 	private JButton add;
 	private JButton discard;
 	
+	private ProductDatabase productDatabase;
+	private SaleConduct saleConduct;
+	
 	public POSWindow(){
+		saleConduct = new SaleConduct(); // object that contains product and saleslineitem list
+		productDatabase = new ProductDatabase("products");
+		saleConduct.setProducts(productDatabase.getAll());
+		
 		setLayout(new GridLayout(2, 1, 0, 5)); // frame layout
 		
 		menubar = new JMenuBar();
@@ -136,12 +143,42 @@ public class POSWindow extends JFrame implements ActionListener{
 		setVisible(true);
 		setLocation(150, 50);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		barcode.requestFocusInWindow(); // focus on barcode field once the window launches
 	}
 	
 	public void actionPerformed(ActionEvent e){
-		if(e.getSource() == discountItem){
+		if(e.getSource() == discountItem){ // Discount menu item action
 			new DiscountWindow();
 		}
+		
+		else if(e.getSource() == start){ // START button action
+			saleConduct.setStrategy(DiscountWindow.getStrategy()); // get discount strategy
+		}
+		
+		else if(e.getSource() == add){ // ADD button action
+			if(barcode.getText().length() > 0){ // barcode field is not empty
+				Product temp = productDatabase.getWhere("barcode", barcode.getText());
+				
+				if(temp != null){ // barcode matches with product in database
+					System.out.println(temp);
+				}
+				
+				else{ // barcode doesn't match with product in database
+					JOptionPane.showMessageDialog(null, "Invalid barcode! Such product does not exist on database! Please scan again!");
+				}
+				
+				barcode.setText(""); // clear barcode field
+				barcode.requestFocusInWindow(); // set focus on barcode field
+			}
+		}
+	}
+	
+	public void setSaleConduct(SaleConduct saleConduct){
+		this.saleConduct = saleConduct;
+	}
+	
+	public SaleConduct getSaleConduct(){
+		return saleConduct;
 	}
 	
 	public static void main(String[] args) {
