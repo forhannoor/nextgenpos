@@ -12,6 +12,12 @@ public class SaleConduct {
     	products = new ArrayList<Product>();
     	salesLineItems = new ArrayList<SalesLineItem>();
     }
+    
+    public void setProducts(ArrayList<Product> records){
+    	for(Product p: records){
+    		products.add(p);
+    	}
+    }
 
 	public ArrayList<Product> getProducts() {
 		return products;
@@ -27,5 +33,5 @@ public class SaleConduct {
 
 	public void setStrategy(Discount strategy) {
 		this.strategy = strategy;
-	}	
+	}
 }
