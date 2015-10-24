@@ -11,7 +11,7 @@ public class ThresholdDiscount implements Discount{
 	}
 
 	@Override
-	public double getNetTotal(Sale s) {
+	public double getTotal(Sale s) {
 		double d = s.getAmount();
 		
 		if(d >= threshold){
@@ -20,27 +20,16 @@ public class ThresholdDiscount implements Discount{
 		
 		return d;
 	}
-	
-	public double getNetTotal(Sale s, double vat) {
-		double temp = getNetTotal(s);
-		double d = 0;
-		
-		if(temp < s.getAmount()){ // discount, vat is applied on each component
-			double baseVat = s.getAmount() + s.getAmount() * vat / 100.00;
-			double discountedVat = temp + temp * vat / 100.00;
-			d = s.getAmount() + baseVat - temp - discountedVat; 
-		}
-		
-		else{ // no discount, vat is applied on base price
-			d = s.getAmount() + s.getAmount() * vat / 100.00;
-		}
-		
-		return d;
-	}
 
 	@Override
 	public double getDiscount(Sale s) {
-		return discount;
+		double d = 0.0;
+		
+		if(s.getAmount() >= threshold){
+			d = discount;
+		}
+		
+		return d;
 	}
 
 	public double getThreshold() {
