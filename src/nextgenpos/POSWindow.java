@@ -190,8 +190,14 @@ public class POSWindow extends JFrame implements ActionListener{
 					salesLine.setValueAt(sli.getSubTotal(), salesLineRowCount, 4); // subtotal
 					salesLineRowCount += 1;
 					
-					// update numeric fields
+					// update total
+					double t = Double.parseDouble(total.getText()); // previous total
+					t += sli.getSubTotal(); // current total
+					total.setText(t + "");
 					
+					// update discount
+					double d = saleConduct.getStrategy().getDiscount(new Sale(t));
+					discount.setText(d + "");
 				}
 				
 				else{ // barcode doesn't match with product in database

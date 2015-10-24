@@ -18,6 +18,10 @@ public class Sale {
 		this.description = description;
 		this.amount = amount;
 	}
+	
+	public Sale(double amount){
+		this.amount = amount;
+	}
 
 	public int getId() {
 		return id;
