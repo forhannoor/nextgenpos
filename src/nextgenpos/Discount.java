@@ -1,6 +1,6 @@
 package nextgenpos;
 
 public interface Discount {
-    double getTotal(Sale s);
-    double getDiscount(Sale s);
+    double getTotal(double s);
+    double getDiscount(double s);
 }

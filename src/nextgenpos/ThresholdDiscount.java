@@ -11,8 +11,8 @@ public class ThresholdDiscount implements Discount{
 	}
 
 	@Override
-	public double getTotal(Sale s) {
-		double d = s.getAmount();
+	public double getTotal(double s) {
+		double d = s;
 		
 		if(d >= threshold){
 			d -= discount;
@@ -22,10 +22,10 @@ public class ThresholdDiscount implements Discount{
 	}
 
 	@Override
-	public double getDiscount(Sale s) {
+	public double getDiscount(double s) {
 		double d = 0.0;
 		
-		if(s.getAmount() >= threshold){
+		if(s >= threshold){
 			d = discount;
 		}
 		

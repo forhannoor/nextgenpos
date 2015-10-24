@@ -36,7 +36,6 @@ public class POSWindow extends JFrame implements ActionListener{
 	
 	public POSWindow(){
 		saleConduct = new SaleConduct(); // object that contains product and saleslineitem list
-		saleConduct.setVat(5);
 		productDatabase = new ProductDatabase("products");
 		salesLineRowCount = 0;
 		
@@ -196,8 +195,27 @@ public class POSWindow extends JFrame implements ActionListener{
 					total.setText(t + "");
 					
 					// update discount
-					double d = saleConduct.getStrategy().getDiscount(new Sale(t));
+					Discount dis = saleConduct.getStrategy();
+					double d = t; // if no discount is applicable
+					
+					if(dis != null){ // if discount is applicable
+						d = dis.getDiscount(t);
+					}
+					
 					discount.setText(d + "");
+					
+					// update vat
+					double basePrice = t;
+					double discountedPrice = d;
+					Vat v = new Vat(10);
+					double baseVat = v.calculateVat(basePrice);
+					double discountedVat = v.calculateVat(discountedPrice);
+					double netVat = baseVat - discountedVat;
+					vat.setText(netVat + "");
+					
+					// update net total
+					double net = t + netVat - d;
+					netTotal.setText(net + "");
 				}
 				
 				else{ // barcode doesn't match with product in database

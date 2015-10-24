@@ -7,12 +7,12 @@ public class PercentageDiscount implements Discount{
         this.rate = rate;
     }
     
-    public double getTotal(Sale s){
-        return s.getAmount() - getDiscount(s);
+    public double getTotal(double s){
+        return s - getDiscount(s);
     }
     
-    public double getDiscount(Sale s){
-    	return (rate * s.getAmount()) / 100.0;
+    public double getDiscount(double s){
+    	return (rate * s) / 100.0;
     }
 
 	public double getRate() {
