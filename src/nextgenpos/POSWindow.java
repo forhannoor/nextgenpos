@@ -1,5 +1,6 @@
 package nextgenpos;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,8 +36,8 @@ public class POSWindow extends JFrame implements ActionListener{
 	
 	public POSWindow(){
 		saleConduct = new SaleConduct(); // object that contains product and saleslineitem list
+		saleConduct.setVat(5);
 		productDatabase = new ProductDatabase("products");
-		saleConduct.setProducts(productDatabase.getAll());
 		salesLineRowCount = 0;
 		
 		setLayout(new GridLayout(2, 1, 0, 5)); // frame layout
@@ -116,12 +117,20 @@ public class POSWindow extends JFrame implements ActionListener{
 		// initialize third column of bottom panel
 		total = new JTextField();
 		total.setEditable(false);
+		total.setFont(new Font("SansSerif", Font.BOLD, 24));
+		total.setHorizontalAlignment(JTextField.RIGHT);
 		vat = new JTextField();
 		vat.setEditable(false);
+		vat.setFont(new Font("SansSerif", Font.BOLD, 24));
+		vat.setHorizontalAlignment(JTextField.RIGHT);
 		discount = new JTextField();
 		discount.setEditable(false);
+		discount.setFont(new Font("SansSerif", Font.BOLD, 24));
+		discount.setHorizontalAlignment(JTextField.RIGHT);
 		netTotal = new JTextField();
 		netTotal.setEditable(false);
+		netTotal.setFont(new Font("SansSerif", Font.BOLD, 24));
+		netTotal.setHorizontalAlignment(JTextField.RIGHT);
 		bottomThirdColumn.add(new JLabel("Total"));
 		bottomThirdColumn.add(total);
 		bottomThirdColumn.add(new JLabel("VAT"));
@@ -155,8 +164,13 @@ public class POSWindow extends JFrame implements ActionListener{
 		}
 		
 		else if(e.getSource() == start){ // START button action
+			saleConduct.clearSalesLineItems(); // clear saleslineitems
 			saleConduct.setStrategy(DiscountWindow.getStrategy()); // get discount strategy
 			setSalesLineRowCount(0);
+			total.setText("0.0");
+			vat.setText("0.0");
+			discount.setText("0.0");
+			netTotal.setText("0.0");
 		}
 		
 		else if(e.getSource() == add){ // ADD button action
@@ -167,6 +181,7 @@ public class POSWindow extends JFrame implements ActionListener{
 					// add product to saleslineitem list
 					SalesLineItem sli = new SalesLineItem(temp, Double.parseDouble(quantity.getValue().toString()));
 					saleConduct.addSalesLineItem(sli);
+					
 					// display saleslineitem to salesline
 					salesLine.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0); // #
 					salesLine.setValueAt(sli.getProduct().getName(), salesLineRowCount, 1); // name
@@ -174,6 +189,13 @@ public class POSWindow extends JFrame implements ActionListener{
 					salesLine.setValueAt(sli.getQuantity(), salesLineRowCount, 3); // quantity
 					salesLine.setValueAt(sli.getSubTotal(), salesLineRowCount, 4); // subtotal
 					salesLineRowCount += 1;
+					
+					// update total, vat, discount and nettotal
+					double t = Double.parseDouble(total.getText()) + sli.getSubTotal();
+					total.setText(t + "");
+					Sale tempSale = new Sale("", t);
+					discount.setText(saleConduct.getStrategy().getDiscount(tempSale) + "");
+					netTotal.setText(saleConduct.getStrategy().getNetTotal(tempSale, saleConduct.getVat()) + "");
 				}
 				
 				else{ // barcode doesn't match with product in database
@@ -182,6 +204,7 @@ public class POSWindow extends JFrame implements ActionListener{
 				
 				barcode.setText(""); // clear barcode field
 				barcode.requestFocusInWindow(); // set focus on barcode field
+				quantity.setValue(1.0); // reset quantity field
 			}
 		}
 	}

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 public class SaleConduct {
 	private Discount strategy;
+	private double vat;
     private ArrayList<Product> products;
     private ArrayList<SalesLineItem> salesLineItems;
     
-    public SaleConduct(Discount strategy){
+    public SaleConduct(Discount strategy, double vat){
     	this.strategy = strategy;
+    	this.vat = vat;
     	products = new ArrayList<Product>();
     	salesLineItems = new ArrayList<SalesLineItem>();
     }
@@ -46,5 +48,13 @@ public class SaleConduct {
 
 	public void setStrategy(Discount strategy) {
 		this.strategy = strategy;
+	}
+
+	public double getVat() {
+		return vat;
+	}
+
+	public void setVat(double vat) {
+		this.vat = vat;
 	}
 }

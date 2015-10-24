@@ -20,6 +20,23 @@ public class ThresholdDiscount implements Discount{
 		
 		return d;
 	}
+	
+	public double getNetTotal(Sale s, double vat) {
+		double temp = getNetTotal(s);
+		double d = 0;
+		
+		if(temp < s.getAmount()){ // discount, vat is applied on each component
+			double baseVat = s.getAmount() + s.getAmount() * vat / 100.00;
+			double discountedVat = temp + temp * vat / 100.00;
+			d = s.getAmount() + baseVat - temp - discountedVat; 
+		}
+		
+		else{ // no discount, vat is applied on base price
+			d = s.getAmount() + s.getAmount() * vat / 100.00;
+		}
+		
+		return d;
+	}
 
 	@Override
 	public double getDiscount(Sale s) {
