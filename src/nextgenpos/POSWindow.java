@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -165,11 +167,7 @@ public class POSWindow extends JFrame implements ActionListener{
 		else if(e.getSource() == start){ // START button action
 			saleConduct.clearSalesLineItems(); // clear saleslineitems
 			saleConduct.setStrategy(DiscountWindow.getStrategy()); // get discount strategy
-			setSalesLineRowCount(0);
-			total.setText("0.0");
-			vat.setText("0.0");
-			discount.setText("0.0");
-			netTotal.setText("0.0");
+			resetFields();
 		}
 		
 		else if(e.getSource() == add){ // ADD button action
@@ -227,6 +225,18 @@ public class POSWindow extends JFrame implements ActionListener{
 				quantity.setValue(1.0); // reset quantity field
 			}
 		}
+		
+		else if(e.getSource() == end){ // END button action
+			new Payment(Double.parseDouble(netTotal.getText()));
+		}
+	}
+	
+	public void resetFields(){
+		setSalesLineRowCount(0);
+		total.setText("0.0");
+		vat.setText("0.0");
+		discount.setText("0.0");
+		netTotal.setText("0.0");
 	}
 	
 	public void setSaleConduct(SaleConduct saleConduct){
