@@ -23,7 +23,7 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	public Payment(double dueAmount){
 		setLayout(new GridLayout(6, 2));
 		
-		paymentMethods = new JComboBox(new String [] {"----", "CASH", "Card"});
+		paymentMethods = new JComboBox(new String [] {"----", "CASH", "CARD"});
 		paymentMethods.addItemListener(this);
 		
 		cardNo = new JTextField();
@@ -63,7 +63,17 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == process){ // Process button action
+			double d = Double.parseDouble(due.getText());
+			double p = Double.parseDouble(paid.getText());
 			
+			if(p < d){ // less amount paid, show error
+				JOptionPane.showMessageDialog(null, "Please pay correct amount! Thank you.");
+			}
+			
+			else{ // equal or more amount paid, calculate and display change if applicable
+				double c = p - d;
+				change.setText(c + "");
+			}
 		}
 	}
 
@@ -72,8 +82,13 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 		if(e.getStateChange() == 1){
 			String selectedMethod = e.getItem().toString();
 			
-			if(selectedMethod.equals("")){ // CASH selected
-				
+			if(selectedMethod.equals("CASH")){ // CASH selected
+				paid.setEditable(true);
+			}
+			
+			else if(selectedMethod.equals("CARD")){ // CARD selected
+				paid.setEditable(false);
+				cardNo.setEditable(true);
 			}
 		}
 	}
