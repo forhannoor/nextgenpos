@@ -63,16 +63,43 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == process){ // Process button action
-			double d = Double.parseDouble(due.getText());
-			double p = Double.parseDouble(paid.getText());
+			String method = paymentMethods.getSelectedItem().toString();
 			
-			if(p < d){ // less amount paid, show error
-				JOptionPane.showMessageDialog(null, "Please pay correct amount! Thank you.");
+			if(method.equals("CASH")){ // CASH payment
+				double d = Double.parseDouble(due.getText());
+				double p = Double.parseDouble(paid.getText());
+				
+				if(p < d){ // less amount paid, show error
+					JOptionPane.showMessageDialog(null, "Please pay correct amount! Thank you.");
+				}
+				
+				else{ // equal or more amount paid, calculate and display change if applicable
+					double c = p - d;
+					change.setText(c + "");
+					
+					if(p == d){ // no change
+						JOptionPane.showMessageDialog(null, "Transaction successful. Thank you!");
+						dispose();
+					}
+					
+					else{ // change
+						JOptionPane.showMessageDialog(null, "<html><h1>Please return change, amount: " + change.getText() + "</h1></html>");
+						dispose();
+					}
+				}
 			}
 			
-			else{ // equal or more amount paid, calculate and display change if applicable
-				double c = p - d;
-				change.setText(c + "");
+			else if(method.equals("CARD")){ // CARD payment
+				String cNumber = cardNo.getText();
+				
+				if(cNumber.length() == 16){
+					JOptionPane.showMessageDialog(null, "Transaction successful. Thank you!");
+					dispose();
+				}
+				
+				else{
+					JOptionPane.showMessageDialog(null, "Invalid Card Number! Please check again.");
+				}
 			}
 		}
 	}
@@ -83,6 +110,7 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 			String selectedMethod = e.getItem().toString();
 			
 			if(selectedMethod.equals("CASH")){ // CASH selected
+				cardNo.setEditable(false);
 				paid.setEditable(true);
 			}
 			
