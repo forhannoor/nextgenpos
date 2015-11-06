@@ -64,6 +64,8 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == process){ // Process button action
 			String method = paymentMethods.getSelectedItem().toString();
+			SaleDatabase sb = new SaleDatabase("sales");
+			Sale sale = null;
 			
 			if(method.equals("CASH")){ // CASH payment
 				double d = Double.parseDouble(due.getText());
@@ -86,6 +88,10 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 						JOptionPane.showMessageDialog(null, "<html><h1>Please return change, amount: " + change.getText() + "</h1></html>");
 						dispose();
 					}
+					
+					// insert into sales table
+					sale = new Sale("", d);
+					sb.insert(sale);
 				}
 			}
 			
@@ -94,6 +100,9 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 				
 				if(cNumber.length() == 16){
 					JOptionPane.showMessageDialog(null, "Transaction successful. Thank you!");
+					// insert into sales table
+					sale = new Sale("", Double.parseDouble(due.getText()));
+					sb.insert(sale);
 					dispose();
 				}
 				
