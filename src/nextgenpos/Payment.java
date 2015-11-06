@@ -29,6 +29,7 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 		cardNo = new JTextField();
 		cardNo.setEditable(false);
 		due = new JTextField();
+		dueAmount = Math.ceil(dueAmount);
 		due.setText(dueAmount + "");
 		due.setEditable(false);
 		paid = new JTextField();
