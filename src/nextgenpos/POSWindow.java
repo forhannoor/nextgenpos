@@ -9,6 +9,7 @@ import java.awt.event.FocusListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 public class POSWindow extends JFrame implements ActionListener{
 	
@@ -85,7 +86,6 @@ public class POSWindow extends JFrame implements ActionListener{
 		salesLine.getTableHeader().getColumnModel().getColumn(4).setHeaderValue("Subtotal");
 		salesLine.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(100);
 		salesLine.getTableHeader().getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-		
 		JScrollPane pane = new JScrollPane(salesLine);
 		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		top.add(pane);
@@ -228,15 +228,24 @@ public class POSWindow extends JFrame implements ActionListener{
 		
 		else if(e.getSource() == end){ // END button action
 			new Payment(Double.parseDouble(netTotal.getText()));
+			resetFields();
 		}
 	}
 	
 	public void resetFields(){
-		setSalesLineRowCount(0);
 		total.setText("0.0");
 		vat.setText("0.0");
 		discount.setText("0.0");
 		netTotal.setText("0.0");
+		
+		// clear sales line
+		for (int i = 0; i < getSalesLineRowCount(); i++){
+		    for(int j = 0; j < 5; j++) {
+		        salesLine.setValueAt("", i, j);
+		    }
+		}
+		
+		setSalesLineRowCount(0);
 	}
 	
 	public void setSaleConduct(SaleConduct saleConduct){
