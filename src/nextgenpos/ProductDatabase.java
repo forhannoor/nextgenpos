@@ -1,3 +1,5 @@
+// Handles database operations for products.
+
 package nextgenpos;
 
 import java.sql.SQLException;

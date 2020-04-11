@@ -1,3 +1,5 @@
+// GUI for configuring discount parameters.
+
 package nextgenpos;
 
 import java.awt.GridLayout;

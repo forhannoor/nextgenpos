@@ -1,3 +1,5 @@
+// Class that implements percentage discount.
+
 package nextgenpos;
 
 public class PercentageDiscount implements Discount{

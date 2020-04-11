@@ -1,3 +1,5 @@
+// Represents users who use the POS program.
+
 package nextgenpos;
 
 public class User {

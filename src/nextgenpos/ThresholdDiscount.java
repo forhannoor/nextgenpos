@@ -1,3 +1,5 @@
+// Implements threshold discount.
+
 package nextgenpos;
 
 public class ThresholdDiscount implements Discount{

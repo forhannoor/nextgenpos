@@ -1,3 +1,5 @@
+// Class that represents products.
+
 package nextgenpos;
 
 public class Product {

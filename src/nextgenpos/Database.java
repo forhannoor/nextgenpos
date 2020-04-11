@@ -1,3 +1,5 @@
+// Class responsible for establishing database connection.
+
 package nextgenpos;
 
 import java.sql.Connection;

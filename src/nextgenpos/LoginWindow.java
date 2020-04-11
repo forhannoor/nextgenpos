@@ -1,3 +1,5 @@
+// Class responsible for user authentication. 
+
 package nextgenpos;
 
 import java.awt.GridLayout;

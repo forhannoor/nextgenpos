@@ -1,3 +1,5 @@
+// Program that provides GUI for all operations.
+
 package nextgenpos;
 
 import java.awt.Font;
@@ -262,9 +264,5 @@ public class POSWindow extends JFrame implements ActionListener{
 
 	public void setSalesLineRowCount(int salesLineRowCount) {
 		this.salesLineRowCount = salesLineRowCount;
-	}
-
-	public static void main(String[] args) {
-		new POSWindow();
 	}
 }

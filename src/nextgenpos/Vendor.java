@@ -1,3 +1,5 @@
+// Represents vendors/suppliers of products.
+
 package nextgenpos;
 
 public class Vendor {

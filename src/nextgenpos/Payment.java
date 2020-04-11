@@ -1,3 +1,5 @@
+// Payment processing class.
+
 package nextgenpos;
 
 import java.awt.Font;

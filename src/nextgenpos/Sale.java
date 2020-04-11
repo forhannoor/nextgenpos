@@ -1,3 +1,5 @@
+// Represents sales.
+
 package nextgenpos;
 
 public class Sale {

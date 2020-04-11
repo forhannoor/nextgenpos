@@ -1,3 +1,5 @@
+// Acts as a delegate between inventory and sales operation.
+
 package nextgenpos;
 
 import java.util.ArrayList;

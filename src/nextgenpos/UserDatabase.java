@@ -1,3 +1,5 @@
+// Handles database operations for users.
+
 package nextgenpos;
 
 import java.sql.SQLException;

@@ -1,3 +1,5 @@
+// Represents sales line items.
+
 package nextgenpos;
 
 public class SalesLineItem {

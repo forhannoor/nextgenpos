@@ -1,3 +1,5 @@
+// Handles VAT.
+
 package nextgenpos;
 
 public class Vat {
