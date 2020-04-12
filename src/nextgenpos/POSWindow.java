@@ -6,118 +6,110 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
+//import java.awt.event.FocusEvent;
+//import java.awt.event.FocusListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+//import javax.swing.table.DefaultTableModel;
+//import javax.swing.table.TableColumn;
 
 public class POSWindow extends JFrame implements ActionListener{
-	
 	private JMenuBar menubar;
-	private JMenu option;
-	private JMenuItem discountItem;
-	
+	private JMenu discountOption;
+	private JMenuItem updateDiscountStrategy;
 	private JTable salesLine;
-	
 	private JTextField barcode;
 	private JTextField total;
 	private JTextField vat;
 	private JTextField discount;
 	private JTextField netTotal;
-	
 	private JSpinner quantity;
-	
-	private JButton start;
-	private JButton end;
+	private JToggleButton saleButton;
 	private JButton add;
 	private JButton discard;
-	
 	private ProductDatabase productDatabase;
 	private SaleConduct saleConduct;
-	
 	private int salesLineRowCount;
 	
+	private final int WIDTH = 1024;
+	private final int HEIGHT = 768;
+	private final int INI_LOCATION = 100;
+	private final int NUM_COLUMNS = 5;
+	private final int [] CELL_WIDTHS = {10, 360, 160, 50, 100};
+	private final String FRAME_TITLE = "NextgenPOSv3.0";
+	private final String START_SALE = "Start Sale";
+	private final String END_SALE = "End Sale";
+	private final String DISCOUNT_OPTION = "Discount";
+	private final String UPDATE_DISCOUNT_OPTION = "Update Discount";
+	private final String ADD = "Add";
+	private final String DISCARD = "Discard";
+	private final String BARCODE = "Barcode";
+	private final String QTY = "Qty";
+	private final String BLANK = "";
+	private final String TOTAL = "Total";
+	private final String VAT = "VAT";
+	private final String NET = "Net";
+	private final String [] LABELS = new String [] {"#", "Product", "Vendor", "Qty", "Subtotal"};
+	
 	public POSWindow(){
-		saleConduct = new SaleConduct(); // object that contains product and saleslineitem list
-		productDatabase = new ProductDatabase("products");
+		setLayout(new GridLayout(2, 1, 0, 5));
+		saleConduct = new SaleConduct();
+		productDatabase = new ProductDatabase();
 		salesLineRowCount = 0;
-		
-		setLayout(new GridLayout(2, 1, 0, 5)); // frame layout
-		
 		menubar = new JMenuBar();
-		option = new JMenu("Option");
-		discountItem = new JMenuItem("Discount Strategy");
-		discountItem.addActionListener(this);
-		option.add(discountItem);
-		menubar.add(option);
+		discountOption = new JMenu(DISCOUNT_OPTION);
+		updateDiscountStrategy = new JMenuItem(UPDATE_DISCOUNT_OPTION);
+		updateDiscountStrategy.addActionListener(this);
+		discountOption.add(updateDiscountStrategy);
+		menubar.add(discountOption);
 		setJMenuBar(menubar);
-		
-		JPanel top = new JPanel(); // contains sales line
-		top.setLayout(new GridLayout(1, 1));
-		JPanel bottom = new JPanel(); // contains 3 more panels
-		bottom.setLayout(new GridLayout(1, 3, 20, 0));
-		JPanel bottomFirstColumn = new JPanel(); // contains start and end buttons 
+		var topPanel = new JPanel();
+		topPanel.setLayout(new GridLayout(1, 1));
+		var bottomPanel = new JPanel();
+		bottomPanel.setLayout(new GridLayout(1, 3, 20, 0));
+		var bottomFirstColumn = new JPanel(); 
 		bottomFirstColumn.setLayout(new GridLayout(2, 1));
-		JPanel bottomSecondColumn = new JPanel(); // contains fields to add/discard product 
+		var bottomSecondColumn = new JPanel(); 
 		bottomSecondColumn.setLayout(new GridLayout(4, 2));
-		JPanel bottomThirdColumn = new JPanel(); // contains total, vat, discount and netTotal fields
+		var bottomThirdColumn = new JPanel();
 		bottomThirdColumn.setLayout(new GridLayout(4, 2));
-		
-		// initialize top panel component
 		salesLine = new JTable(200, 5);
+		var cellRenderer = new DefaultTableCellRenderer();
+		cellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		var columnModel = salesLine.getTableHeader().getColumnModel();
 		
-		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		// Set table parameters.
+		for(int i = 0; i < NUM_COLUMNS; ++i) {
+			var column = columnModel.getColumn(i);
+			column.setHeaderValue(LABELS[i]);
+			column.setPreferredWidth(CELL_WIDTHS[i]);
+			column.setCellRenderer(cellRenderer);
+		}
 		
-		salesLine.getTableHeader().getColumnModel().getColumn(0).setHeaderValue("#");
-		salesLine.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(10);
-		salesLine.getTableHeader().getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-		salesLine.getTableHeader().getColumnModel().getColumn(1).setHeaderValue("Product");
-		salesLine.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(360);
-		salesLine.getTableHeader().getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-		salesLine.getTableHeader().getColumnModel().getColumn(2).setHeaderValue("Vendor");
-		salesLine.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(160);
-		salesLine.getTableHeader().getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-		salesLine.getTableHeader().getColumnModel().getColumn(3).setHeaderValue("Quantity");
-		salesLine.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(50);
-		salesLine.getTableHeader().getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-		salesLine.getTableHeader().getColumnModel().getColumn(4).setHeaderValue("Subtotal");
-		salesLine.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(100);
-		salesLine.getTableHeader().getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-		JScrollPane pane = new JScrollPane(salesLine);
+		var scrollPane = new JScrollPane(salesLine);
 		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		top.add(pane);
-		
-		// initialize first column of bottom panel
-		start = new JButton("Start Sale");
-		start.addActionListener(this);
-		end = new JButton("End Sale");
-		end.addActionListener(this);
-		bottomFirstColumn.add(start);
-		bottomFirstColumn.add(end);
-		
-		// initialize second column of bottom panel
+		topPanel.add(scrollPane);
+		saleButton = new JToggleButton(START_SALE);
+		saleButton.addActionListener(this);
+		bottomFirstColumn.add(saleButton);
 		barcode = new JTextField();
-		SpinnerNumberModel model = new SpinnerNumberModel(1.0, 0.5, 100.00, 1.0);  
+		var model = new SpinnerNumberModel(1.0, 0.5, 10000.00, 0.5);  
 		quantity = new JSpinner(model);
-		add = new JButton("Add");
+		add = new JButton(ADD);
 		add.addActionListener(this);
-		discard = new JButton("Discard");
+		discard = new JButton(DISCARD);
 		discard.addActionListener(this);
-		bottomSecondColumn.add(new JLabel("Barcode"));
+		var tempLabel = new JLabel(BARCODE);
+		bottomSecondColumn.add(tempLabel);
 		bottomSecondColumn.add(barcode);
-		bottomSecondColumn.add(new JLabel("Quantity"));
+		tempLabel = new JLabel(QTY);
+		bottomSecondColumn.add(tempLabel);
 		bottomSecondColumn.add(quantity);
-		bottomSecondColumn.add(new JLabel());
+		tempLabel = new JLabel(BLANK);
+		bottomSecondColumn.add(tempLabel);
 		bottomSecondColumn.add(add);
 		bottomSecondColumn.add(new JLabel());
 		bottomSecondColumn.add(discard);
-		
-		// initialize third column of bottom panel
 		total = new JTextField();
 		total.setEditable(false);
 		total.setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -134,45 +126,62 @@ public class POSWindow extends JFrame implements ActionListener{
 		netTotal.setEditable(false);
 		netTotal.setFont(new Font("SansSerif", Font.BOLD, 24));
 		netTotal.setHorizontalAlignment(JTextField.RIGHT);
-		bottomThirdColumn.add(new JLabel("Total"));
+		tempLabel = new JLabel(TOTAL);
+		bottomThirdColumn.add(tempLabel);
 		bottomThirdColumn.add(total);
-		bottomThirdColumn.add(new JLabel("VAT"));
+		tempLabel = new JLabel(VAT);
+		bottomThirdColumn.add(tempLabel);
 		bottomThirdColumn.add(vat);
-		bottomThirdColumn.add(new JLabel("Discount"));
+		tempLabel = new JLabel(DISCOUNT_OPTION);
+		bottomThirdColumn.add(tempLabel);
 		bottomThirdColumn.add(discount);
-		bottomThirdColumn.add(new JLabel("Net Total"));
+		tempLabel = new JLabel(NET);
+		bottomThirdColumn.add(tempLabel);
 		bottomThirdColumn.add(netTotal);
-		
-		// initialize bottom panel components
-		bottom.add(bottomFirstColumn);
-		bottom.add(bottomSecondColumn);
-		bottom.add(bottomThirdColumn);
-		
-		// add panels to frame
-		add(top);
-		add(bottom);
-		
-		// initialize frame properties
-		setSize(1000, 600);
-		setTitle("NextGenPOS");
+		bottomPanel.add(bottomFirstColumn);
+		bottomPanel.add(bottomSecondColumn);
+		bottomPanel.add(bottomThirdColumn);
+		add(topPanel);
+		add(bottomPanel);
+		setSize(WIDTH, HEIGHT);
+		setResizable(false);
+		setTitle(FRAME_TITLE);
 		setVisible(true);
-		setLocation(150, 50);
+		setLocation(INI_LOCATION, INI_LOCATION);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		barcode.requestFocusInWindow(); // focus on barcode field once the window launches
+		barcode.requestFocusInWindow();
 	}
 	
-	public void actionPerformed(ActionEvent e){
-		if(e.getSource() == discountItem){ // Discount menu item action
+	public void actionPerformed(ActionEvent actionEvent){
+		// "Discount strategy" is clicked.
+		if(actionEvent.getSource() == updateDiscountStrategy){
 			new DiscountWindow();
 		}
 		
-		else if(e.getSource() == start){ // START button action
-			saleConduct.clearSalesLineItems(); // clear saleslineitems
-			saleConduct.setStrategy(DiscountWindow.getStrategy()); // get discount strategy
+		// "Start Sale" / "End Sale" is clicked.
+		else if(actionEvent.getSource() == saleButton){
+			var isSelected = saleButton.isSelected();
+			var saleButtonLabel = isSelected ? END_SALE : START_SALE;
+			saleButton.setText(saleButtonLabel);
+			
+			// If "Start Sale".
+			if(isSelected){
+				// Clear sales line items.
+				saleConduct.clearSalesLineItems();
+				// Update discount strategy.
+				saleConduct.setStrategy(DiscountWindow.getStrategy());
+			}
+			
+			// If "End Sale".
+			else{
+				new Payment(Double.parseDouble(netTotal.getText()));
+			}
+			
+			// Clear fields.
 			resetFields();
 		}
 		
-		else if(e.getSource() == add){ // ADD button action
+		else if(actionEvent.getSource() == add){ // ADD button action
 			if(barcode.getText().length() > 0){ // barcode field is not empty
 				Product temp = productDatabase.getWhere("barcode", barcode.getText());
 				
@@ -226,11 +235,6 @@ public class POSWindow extends JFrame implements ActionListener{
 				barcode.requestFocusInWindow(); // set focus on barcode field
 				quantity.setValue(1.0); // reset quantity field
 			}
-		}
-		
-		else if(e.getSource() == end){ // END button action
-			new Payment(Double.parseDouble(netTotal.getText()));
-			resetFields();
 		}
 	}
 	

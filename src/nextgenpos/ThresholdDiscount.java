@@ -3,7 +3,6 @@
 package nextgenpos;
 
 public class ThresholdDiscount implements Discount{
-
 	private double threshold;
 	private double discount;
 	
@@ -12,26 +11,20 @@ public class ThresholdDiscount implements Discount{
 		this.discount = discount;
 	}
 
+	// Calculates price after discount (if any).
 	@Override
-	public double getTotal(double s) {
-		double d = s;
-		
-		if(d >= threshold){
-			d -= discount;
+	public double getTotal(double price) {
+		if(price >= threshold) {
+			price -= discount;
 		}
 		
-		return d;
+		return price;
 	}
 
+	// Calculates amount of discount (if any).
 	@Override
-	public double getDiscount(double s) {
-		double d = 0.0;
-		
-		if(s >= threshold){
-			d = discount;
-		}
-		
-		return d;
+	public double getDiscount(double price) {
+		return (price >= threshold) ? discount : 0;
 	}
 
 	public double getThreshold() {

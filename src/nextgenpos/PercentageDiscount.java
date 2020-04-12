@@ -4,24 +4,29 @@ package nextgenpos;
 
 public class PercentageDiscount implements Discount{
     private double rate;
+    private final double PERCENT = 100.0;
     
     public PercentageDiscount(double rate){
-        this.rate = rate;
+        this.rate = rate / PERCENT;
     }
     
-    public double getTotal(double s){
-        return s - getDiscount(s);
+    // Calculates price after discount (if any). 
+    @Override
+    public double getTotal(double price){
+        return (price - getDiscount(price));
     }
     
-    public double getDiscount(double s){
-    	return (rate * s) / 100.0;
+    // Calculates amount of discount (if any).
+    @Override
+    public double getDiscount(double price){
+    	return (rate * price);
     }
 
 	public double getRate() {
-		return rate;
+		return rate * PERCENT;
 	}
 
 	public void setRate(double rate) {
-		this.rate = rate;
+		this.rate = rate / PERCENT;
 	}
 }

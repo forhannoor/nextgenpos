@@ -1,4 +1,4 @@
-// Payment processing class.
+// GUI for payment processing.
 
 package nextgenpos;
 
@@ -67,7 +67,7 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == process){ // Process button action
 			String method = paymentMethods.getSelectedItem().toString();
-			SaleDatabase sb = new SaleDatabase("sales");
+			SaleDatabase sb = new SaleDatabase();
 			Sale sale = null;
 			
 			if(method.equals("CASH")){ // CASH payment

@@ -6,24 +6,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ProductDatabase extends Database{
-
-	private String table;
-	
-	public ProductDatabase(String table){
-		this.table = table;
-	}
-	
-	public ProductDatabase(String u, String p, String database, String table){
-		super(u, p, database);
-		this.table = table;
-	}
+	private final String TABLE = "Products";
 	
 	public Product getWhere(String where, String value){
 		Product u = null;
 		
 		try{
 			setConnection();
-			String query = "SELECT * FROM " + this.table;
+			String query = "SELECT * FROM " + this.TABLE;
 			query += " WHERE " + where + " = '" + value + "'";
 			rs = st.executeQuery(query);
 			
@@ -44,7 +34,7 @@ public class ProductDatabase extends Database{
 		
 		try {
 			setConnection();
-			String query = "SELECT * FROM " + this.table;
+			String query = "SELECT * FROM " + this.TABLE;
 			rs = st.executeQuery(query);
 			
 			while(rs.next()){
