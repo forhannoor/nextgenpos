@@ -15,32 +15,39 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class POSWindow extends JFrame implements ActionListener{
 	private JMenuBar menubar;
-	private JMenu discountOption;
-	private JMenuItem updateDiscountStrategy;
-	private JTable salesLine;
-	private JTextField barcode;
-	private JTextField total;
-	private JTextField vat;
-	private JTextField discount;
-	private JTextField netTotal;
-	private JSpinner quantity;
-	private JToggleButton saleButton;
-	private JButton add;
-	private JButton discard;
+	private JMenu discountMenu;
+	private JMenuItem updateDiscountStrategyItem;
+	private JMenuItem updateVatItem;
+	private JTable salesLineTable;
+	private JTextField barcodeField;
+	private JTextField totalField;
+	private JTextField vatField;
+	private JTextField discountField;
+	private JTextField netTotalField;
+	private JSpinner quantitySpinner;
+	private JToggleButton saleToggleButton;
+	private JButton addButton;
+	private JButton discardButton;
 	private ProductDatabase productDatabase;
 	private SaleConduct saleConduct;
+	private Vat vat;
 	private int salesLineRowCount;
 	
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
 	private final int INI_LOCATION = 100;
 	private final int NUM_COLUMNS = 5;
+	private final int FONT_SIZE = 24;
+	private final int VAT_RATE = 5;
+	private final int ZERO = 0;
 	private final int [] CELL_WIDTHS = {10, 360, 160, 50, 100};
 	private final String FRAME_TITLE = "NextgenPOSv3.0";
 	private final String START_SALE = "Start Sale";
 	private final String END_SALE = "End Sale";
-	private final String DISCOUNT_OPTION = "Discount";
+	private final String OPTION = "Options";
+	private final String DISCOUNT = "Discount";
 	private final String UPDATE_DISCOUNT_OPTION = "Update Discount";
+	private final String UPDATE_VAT = "Update VAT";
 	private final String ADD = "Add";
 	private final String DISCARD = "Discard";
 	private final String BARCODE = "Barcode";
@@ -49,19 +56,30 @@ public class POSWindow extends JFrame implements ActionListener{
 	private final String TOTAL = "Total";
 	private final String VAT = "VAT";
 	private final String NET = "Net";
+	private final String FONT_NAME = "SansSerif";
+	private final String INVALID_BARCODE = "Invalid barcode! Please scan again!";
 	private final String [] LABELS = new String [] {"#", "Product", "Vendor", "Qty", "Subtotal"};
 	
 	public POSWindow(){
 		setLayout(new GridLayout(2, 1, 0, 5));
 		saleConduct = new SaleConduct();
 		productDatabase = new ProductDatabase();
+		vat = new Vat(VAT_RATE);
 		salesLineRowCount = 0;
 		menubar = new JMenuBar();
-		discountOption = new JMenu(DISCOUNT_OPTION);
-		updateDiscountStrategy = new JMenuItem(UPDATE_DISCOUNT_OPTION);
-		updateDiscountStrategy.addActionListener(this);
-		discountOption.add(updateDiscountStrategy);
-		menubar.add(discountOption);
+		discountMenu = new JMenu(OPTION);
+		updateDiscountStrategyItem = new JMenuItem(UPDATE_DISCOUNT_OPTION);
+		updateDiscountStrategyItem.addActionListener(e -> { new DiscountWindow(); });
+		discountMenu.add(updateDiscountStrategyItem);
+		updateVatItem = new JMenuItem(UPDATE_VAT);
+		updateVatItem.addActionListener(e -> {
+			// Get VAT rate from user.
+			var vatRate = Double.parseDouble(JOptionPane.showInputDialog(VAT, vat.getRate()));
+			// Update vat rate.
+			vat.setRate(vatRate);
+		});
+		discountMenu.add(updateVatItem);
+		menubar.add(discountMenu);
 		setJMenuBar(menubar);
 		var topPanel = new JPanel();
 		topPanel.setLayout(new GridLayout(1, 1));
@@ -73,10 +91,10 @@ public class POSWindow extends JFrame implements ActionListener{
 		bottomSecondColumn.setLayout(new GridLayout(4, 2));
 		var bottomThirdColumn = new JPanel();
 		bottomThirdColumn.setLayout(new GridLayout(4, 2));
-		salesLine = new JTable(200, 5);
+		salesLineTable = new JTable(200, 5);
 		var cellRenderer = new DefaultTableCellRenderer();
 		cellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		var columnModel = salesLine.getTableHeader().getColumnModel();
+		var columnModel = salesLineTable.getTableHeader().getColumnModel();
 		
 		// Set table parameters.
 		for(int i = 0; i < NUM_COLUMNS; ++i) {
@@ -86,58 +104,59 @@ public class POSWindow extends JFrame implements ActionListener{
 			column.setCellRenderer(cellRenderer);
 		}
 		
-		var scrollPane = new JScrollPane(salesLine);
-		salesLine.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		var scrollPane = new JScrollPane(salesLineTable);
+		salesLineTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		topPanel.add(scrollPane);
-		saleButton = new JToggleButton(START_SALE);
-		saleButton.addActionListener(this);
-		bottomFirstColumn.add(saleButton);
-		barcode = new JTextField();
+		saleToggleButton = new JToggleButton(START_SALE);
+		saleToggleButton.addActionListener(this);
+		bottomFirstColumn.add(saleToggleButton);
+		barcodeField = new JTextField();
 		var model = new SpinnerNumberModel(1.0, 0.5, 10000.00, 0.5);  
-		quantity = new JSpinner(model);
-		add = new JButton(ADD);
-		add.addActionListener(this);
-		discard = new JButton(DISCARD);
-		discard.addActionListener(this);
+		quantitySpinner = new JSpinner(model);
+		addButton = new JButton(ADD);
+		addButton.addActionListener(this);
+		discardButton = new JButton(DISCARD);
+		discardButton.addActionListener(this);
 		var tempLabel = new JLabel(BARCODE);
 		bottomSecondColumn.add(tempLabel);
-		bottomSecondColumn.add(barcode);
+		bottomSecondColumn.add(barcodeField);
 		tempLabel = new JLabel(QTY);
 		bottomSecondColumn.add(tempLabel);
-		bottomSecondColumn.add(quantity);
+		bottomSecondColumn.add(quantitySpinner);
 		tempLabel = new JLabel(BLANK);
 		bottomSecondColumn.add(tempLabel);
-		bottomSecondColumn.add(add);
+		bottomSecondColumn.add(addButton);
 		bottomSecondColumn.add(new JLabel());
-		bottomSecondColumn.add(discard);
-		total = new JTextField();
-		total.setEditable(false);
-		total.setFont(new Font("SansSerif", Font.BOLD, 24));
-		total.setHorizontalAlignment(JTextField.RIGHT);
-		vat = new JTextField();
-		vat.setEditable(false);
-		vat.setFont(new Font("SansSerif", Font.BOLD, 24));
-		vat.setHorizontalAlignment(JTextField.RIGHT);
-		discount = new JTextField();
-		discount.setEditable(false);
-		discount.setFont(new Font("SansSerif", Font.BOLD, 24));
-		discount.setHorizontalAlignment(JTextField.RIGHT);
-		netTotal = new JTextField();
-		netTotal.setEditable(false);
-		netTotal.setFont(new Font("SansSerif", Font.BOLD, 24));
-		netTotal.setHorizontalAlignment(JTextField.RIGHT);
+		bottomSecondColumn.add(discardButton);
+		totalField = new JTextField();
+		totalField.setEditable(false);
+		var font = new Font(FONT_NAME, Font.BOLD, FONT_SIZE);
+		totalField.setFont(font);
+		totalField.setHorizontalAlignment(JTextField.RIGHT);
+		vatField = new JTextField();
+		vatField.setEditable(false);
+		vatField.setFont(font);
+		vatField.setHorizontalAlignment(JTextField.RIGHT);
+		discountField = new JTextField();
+		discountField.setEditable(false);
+		discountField.setFont(font);
+		discountField.setHorizontalAlignment(JTextField.RIGHT);
+		netTotalField = new JTextField();
+		netTotalField.setEditable(false);
+		netTotalField.setFont(font);
+		netTotalField.setHorizontalAlignment(JTextField.RIGHT);
 		tempLabel = new JLabel(TOTAL);
 		bottomThirdColumn.add(tempLabel);
-		bottomThirdColumn.add(total);
+		bottomThirdColumn.add(totalField);
 		tempLabel = new JLabel(VAT);
 		bottomThirdColumn.add(tempLabel);
-		bottomThirdColumn.add(vat);
-		tempLabel = new JLabel(DISCOUNT_OPTION);
+		bottomThirdColumn.add(vatField);
+		tempLabel = new JLabel(DISCOUNT);
 		bottomThirdColumn.add(tempLabel);
-		bottomThirdColumn.add(discount);
+		bottomThirdColumn.add(discountField);
 		tempLabel = new JLabel(NET);
 		bottomThirdColumn.add(tempLabel);
-		bottomThirdColumn.add(netTotal);
+		bottomThirdColumn.add(netTotalField);
 		bottomPanel.add(bottomFirstColumn);
 		bottomPanel.add(bottomSecondColumn);
 		bottomPanel.add(bottomThirdColumn);
@@ -149,124 +168,110 @@ public class POSWindow extends JFrame implements ActionListener{
 		setVisible(true);
 		setLocation(INI_LOCATION, INI_LOCATION);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		barcode.requestFocusInWindow();
+		barcodeField.requestFocusInWindow();
 	}
 	
 	public void actionPerformed(ActionEvent actionEvent){
-		// "Discount strategy" is clicked.
-		if(actionEvent.getSource() == updateDiscountStrategy){
-			new DiscountWindow();
-		}
-		
 		// "Start Sale" / "End Sale" is clicked.
-		else if(actionEvent.getSource() == saleButton){
-			var isSelected = saleButton.isSelected();
-			var saleButtonLabel = isSelected ? END_SALE : START_SALE;
-			saleButton.setText(saleButtonLabel);
+		if(actionEvent.getSource() == saleToggleButton){
+			var isSelected = saleToggleButton.isSelected();
 			
-			// If "Start Sale".
+			// If starting sale.
 			if(isSelected){
+				// Update button label.
+				saleToggleButton.setText(END_SALE);
 				// Clear sales line items.
 				saleConduct.clearSalesLineItems();
 				// Update discount strategy.
 				saleConduct.setStrategy(DiscountWindow.getStrategy());
 			}
 			
-			// If "End Sale".
+			// If ending sale.
 			else{
-				new Payment(Double.parseDouble(netTotal.getText()));
+				// Update button label.
+				saleToggleButton.setText(START_SALE);
+				new Payment(Double.parseDouble(netTotalField.getText()));
 			}
 			
 			// Clear fields.
 			resetFields();
 		}
 		
-		else if(actionEvent.getSource() == add){ // ADD button action
-			if(barcode.getText().length() > 0){ // barcode field is not empty
-				Product temp = productDatabase.getWhere("barcode", barcode.getText());
+		// "Add" is clicked.
+		else if(actionEvent.getSource() == addButton){
+			// If barcode is not empty.
+			if(barcodeField.getText().length() > 0){
+				Product temp = productDatabase.getWhere("barcode", barcodeField.getText());
 				
-				if(temp != null){ // barcode matches with product in database
-					// add product to saleslineitem list
-					SalesLineItem sli = new SalesLineItem(temp, Double.parseDouble(quantity.getValue().toString()));
-					saleConduct.addSalesLineItem(sli);
+				// If matching record is found.
+				if(temp != null){
+					// Add product to saleslineitem list.
+					var salesLineItem = new SalesLineItem(temp, Double.parseDouble(quantitySpinner.getValue().toString()));
+					saleConduct.addSalesLineItem(salesLineItem);
+					// Display saleslineitem.
+					salesLineTable.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0);
+					salesLineTable.setValueAt(salesLineItem.getProduct().getName(), salesLineRowCount, 1);
+					salesLineTable.setValueAt(salesLineItem.getProduct().getVendorId(), salesLineRowCount, 2);
+					salesLineTable.setValueAt(salesLineItem.getQuantity(), salesLineRowCount, 3);
+					salesLineTable.setValueAt(salesLineItem.getSubTotal(), salesLineRowCount, 4);
+					++salesLineRowCount;
+					// Update total.
+					var tempTotal = Double.parseDouble(totalField.getText());
+					tempTotal += salesLineItem.getSubTotal();
+					totalField.setText(tempTotal + BLANK);
+					// Update discount.
+					Discount discount = saleConduct.getStrategy();
+					double d = tempTotal; // if no discount is applicable
 					
-					// display saleslineitem to salesline
-					salesLine.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0); // #
-					salesLine.setValueAt(sli.getProduct().getName(), salesLineRowCount, 1); // name
-					salesLine.setValueAt(sli.getProduct().getVendorId(), salesLineRowCount, 2); // vendor
-					salesLine.setValueAt(sli.getQuantity(), salesLineRowCount, 3); // quantity
-					salesLine.setValueAt(sli.getSubTotal(), salesLineRowCount, 4); // subtotal
-					salesLineRowCount += 1;
-					
-					// update total
-					double t = Double.parseDouble(total.getText()); // previous total
-					t += sli.getSubTotal(); // current total
-					total.setText(t + "");
-					
-					// update discount
-					Discount dis = saleConduct.getStrategy();
-					double d = t; // if no discount is applicable
-					
-					if(dis != null){ // if discount is applicable
-						d = dis.getDiscount(t);
+					if(discount != null){ // if discount is applicable
+						d = discount.getDiscount(tempTotal);
 					}
 					
-					discount.setText(d + "");
-					
-					// update vat
-					double basePrice = t;
+					discountField.setText(d + BLANK);
+					// Update VAT.
+					double basePrice = tempTotal;
 					double discountedPrice = d;
 					Vat v = new Vat(10);
 					double baseVat = v.calculateVat(basePrice);
 					double discountedVat = v.calculateVat(discountedPrice);
 					double netVat = baseVat - discountedVat;
-					vat.setText(netVat + "");
+					vatField.setText(netVat + BLANK);
 					
 					// update net total
-					double net = t + netVat - d;
-					netTotal.setText(net + "");
+					double net = tempTotal + netVat - d;
+					netTotalField.setText(net + BLANK);
 				}
 				
-				else{ // barcode doesn't match with product in database
-					JOptionPane.showMessageDialog(null, "Invalid barcode! Such product does not exist on database! Please scan again!");
+				// If no matching record is found.
+				else{
+					JOptionPane.showMessageDialog(null, INVALID_BARCODE);
 				}
 				
-				barcode.setText(""); // clear barcode field
-				barcode.requestFocusInWindow(); // set focus on barcode field
-				quantity.setValue(1.0); // reset quantity field
+				// Reset barcode field.
+				barcodeField.setText(BLANK);
+				 // Set focus on barcode field.
+				barcodeField.requestFocusInWindow();
+				// Reset qty spinner.
+				quantitySpinner.setValue(1.0);
 			}
 		}
 	}
 	
+	// Clears textfields associated with sale.
 	public void resetFields(){
-		total.setText("0.0");
-		vat.setText("0.0");
-		discount.setText("0.0");
-		netTotal.setText("0.0");
+		var clearText = ZERO + BLANK;
+		totalField.setText(clearText);
+		vatField.setText(clearText);
+		discountField.setText(clearText);
+		netTotalField.setText(clearText);
 		
-		// clear sales line
-		for (int i = 0; i < getSalesLineRowCount(); i++){
-		    for(int j = 0; j < 5; j++) {
-		        salesLine.setValueAt("", i, j);
+		// Clear sales line.
+		for (int i = 0; i < salesLineRowCount; ++i){
+		    for(int j = 0; j < NUM_COLUMNS; ++j) {
+		        salesLineTable.setValueAt(BLANK, i, j);
 		    }
 		}
 		
-		setSalesLineRowCount(0);
-	}
-	
-	public void setSaleConduct(SaleConduct saleConduct){
-		this.saleConduct = saleConduct;
-	}
-	
-	public SaleConduct getSaleConduct(){
-		return saleConduct;
-	}
-	
-	public int getSalesLineRowCount() {
-		return salesLineRowCount;
-	}
-
-	public void setSalesLineRowCount(int salesLineRowCount) {
-		this.salesLineRowCount = salesLineRowCount;
+		salesLineRowCount = ZERO;
 	}
 }
