@@ -18,6 +18,7 @@ public class Vat {
 		this.rate = rate / PERCENT;
 	}
 	
+	// Calculate VAT.
 	public double calculateVat(double totalPrice){
 		return totalPrice * rate;
 	}

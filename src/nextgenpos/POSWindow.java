@@ -201,12 +201,12 @@ public class POSWindow extends JFrame implements ActionListener{
 		else if(actionEvent.getSource() == addButton){
 			// If barcode is not empty.
 			if(barcodeField.getText().length() > 0){
-				Product temp = productDatabase.getWhere("barcode", barcodeField.getText());
+				Product product = productDatabase.getWhere("barcode", barcodeField.getText());
 				
 				// If matching record is found.
-				if(temp != null){
+				if(product != null){
 					// Add product to saleslineitem list.
-					var salesLineItem = new SalesLineItem(temp, Double.parseDouble(quantitySpinner.getValue().toString()));
+					var salesLineItem = new SalesLineItem(product, Double.parseDouble(quantitySpinner.getValue().toString()));
 					saleConduct.addSalesLineItem(salesLineItem);
 					// Display saleslineitem.
 					salesLineTable.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0);
@@ -236,8 +236,6 @@ public class POSWindow extends JFrame implements ActionListener{
 					double discountedVat = v.calculateVat(discountedPrice);
 					double netVat = baseVat - discountedVat;
 					vatField.setText(netVat + BLANK);
-					
-					// update net total
 					double net = tempTotal + netVat - d;
 					netTotalField.setText(net + BLANK);
 				}

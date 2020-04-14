@@ -5,131 +5,147 @@ package nextgenpos;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 import javax.swing.*;
 
-public class DiscountWindow extends JFrame implements ActionListener{
-    
-	private JRadioButton noStrategy;
-	private JRadioButton percentageStrategy;
-	private JRadioButton thresholdStrategy;
+enum DiscountType{
+	None,
+	Percentage,
+	Threshold
+}
+
+public class DiscountWindow extends JFrame implements ActionListener, ItemListener{
+	private JComboBox<DiscountType> discountComboBox;
+    private JSpinner percentageSpinner;
+	private JSpinner thresholdSpinner;
+	private JSpinner discountSpinner;
+	private JButton updateButton;
 	
-	private JSpinner percentage;
-	private JSpinner threshold;
-	private JSpinner discount;
-	
-	private JButton set;
+	private final int SIZE = 300;
+	private final int LOCATION = 100;
+	private final String UPDATE = "Update";
+	private final String RATE = "Rate";
+	private final String THRESHOLD = "Threshold";
+	private final String DISCOUNT = "Discount";
+	private final String TITLE = "Discount Method";
+	private final String BLANK = "";
 	
 	public DiscountWindow(){
-		
 		setLayout(new GridLayout(10, 2, 5, 5));
-		
-		noStrategy = new JRadioButton("No discount");
-		percentageStrategy = new JRadioButton("Percentage discount");
-		thresholdStrategy = new JRadioButton("Threshold discount");
-		ButtonGroup bg = new ButtonGroup();
-		bg.add(noStrategy);
-		bg.add(percentageStrategy);
-		bg.add(thresholdStrategy);
-		
-		SpinnerModel percentageModel = new SpinnerNumberModel(0, 0, 100, 0.5);
-		SpinnerModel thresholdModel = new SpinnerNumberModel(0, 0, 1000000, 0.5);
-		SpinnerModel discountModel = new SpinnerNumberModel(0, 0, 1000000, 0.5);
-		
-		percentage = new JSpinner(percentageModel);
-		threshold = new JSpinner(thresholdModel);
-		discount = new JSpinner(discountModel);
-		
-		set = new JButton("Set");
-		set.addActionListener(this);
-		
-		add(noStrategy);
-		add(percentageStrategy);
-		add(new JLabel("Rate"));
-		add(percentage);
-		add(thresholdStrategy);
-		add(new JLabel("Threshold"));
-		add(threshold);
-		add(new JLabel("Discount"));
-		add(discount);
-		add(set);
-		
-		setSize(250, 400);
-		setTitle("Discount Window");
+		discountComboBox = new JComboBox<DiscountType>(DiscountType.values());
+		discountComboBox.addItemListener(this);
+		percentageSpinner = new JSpinner();
+		thresholdSpinner = new JSpinner();
+		discountSpinner = new JSpinner();
+		updateButton = new JButton(UPDATE);
+		updateButton.addActionListener(this);
+		add(new JLabel(BLANK));
+		add(discountComboBox);
+		add(new JLabel(RATE));
+		add(percentageSpinner);
+		add(new JLabel(THRESHOLD));
+		add(thresholdSpinner);
+		add(new JLabel(DISCOUNT));
+		add(discountSpinner);
+		add(new JLabel(BLANK));
+		add(updateButton);
+		setSize(SIZE, SIZE);
+		setTitle(TITLE);
 		setVisible(true);
-		setLocation(400, 50);
+		setLocation(LOCATION, LOCATION);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == set){
-			Discount d = null;
+	public void actionPerformed(ActionEvent actionEvent) {
+		// "Update" is clicked.
+		if(actionEvent.getSource() == updateButton){
+			var discountType = (DiscountType) discountComboBox.getSelectedItem();
+			Discount discount = null;
 			
-			if(percentageStrategy.isSelected()){
-				double rate = Double.parseDouble(percentage.getValue().toString());
-				d = new PercentageDiscount(rate);
+			// If percentage discount is selected.
+			if(discountType == DiscountType.Percentage){
+				double rate = Double.parseDouble(percentageSpinner.getValue().toString());
+				discount = new PercentageDiscount(rate);
 			}
 			
-			else if(thresholdStrategy.isSelected()){
-				double t = Double.parseDouble(threshold.getValue().toString());
-				double dis = Double.parseDouble(discount.getValue().toString());
-				d = new ThresholdDiscount(t, dis);
+			// If threshold discount is selected.
+			else if(discountType == DiscountType.Threshold){
+				double thresholdAmount = Double.parseDouble(thresholdSpinner.getValue().toString());
+				double discountAmount = Double.parseDouble(discountSpinner.getValue().toString());
+				discount = new ThresholdDiscount(thresholdAmount, discountAmount);
 			}
 			
-			setStrategy(d);
+			// Update discount method.
+			setStrategy(discount);
 			dispose();
 		}
 	}
 	
-	public void setStrategy(Discount d){
+	// Updates discount strategy.
+	public void setStrategy(Discount discount){
 		try {
-			FileWriter f = new FileWriter("asset/data/discount.config", false);
+			var fileWriter = new FileWriter("asset/data/discount.config", false);
 			
-			if(d == null){
-				f.write("none");
+			if(discount == null){
+				fileWriter.write("none");
 			}
 			
-			else if(d instanceof PercentageDiscount){
-				PercentageDiscount temp = (PercentageDiscount) d;
-				f.write("percentage\n");
-				f.write(temp.getRate() + "");
+			else if(discount instanceof PercentageDiscount){
+				var temp = (PercentageDiscount) discount;
+				fileWriter.write("percentage\n");
+				fileWriter.write(temp.getRate() + "");
 			}
 			
-			else if(d instanceof ThresholdDiscount){
-				ThresholdDiscount temp = (ThresholdDiscount) d;
-				f.write("threshold\n");
-				f.write(temp.getThreshold() + "\n" + temp.getDiscount());
+			else if(discount instanceof ThresholdDiscount){
+				var temp = (ThresholdDiscount) discount;
+				fileWriter.write("threshold\n");
+				fileWriter.write(temp.getThreshold() + "\n" + temp.getDiscount());
 			}
 			
-			f.close();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			fileWriter.close();
+		} catch (Exception exception) {
+			System.out.println(exception.getMessage());
 		}
 	}
 	
 	public static Discount getStrategy(){
-		Discount d = null;
+		Discount discount = null;
 		
 		try {
-			Scanner s = new Scanner(new File("asset/data/discount.config"));
-			String content = s.nextLine();
+			var scanner = new Scanner(new File("asset/data/discount.config"));
+			String content = scanner.nextLine();
 			
 			if(content.equals("percentage")){
-				double rate = Double.parseDouble(s.nextLine());
-				d = new PercentageDiscount(rate);
+				var rate = Double.parseDouble(scanner.nextLine());
+				discount = new PercentageDiscount(rate);
 			}
 			
 			else if(content.equals("threshold")){
-				double t = Double.parseDouble(s.nextLine());
-				double dis = Double.parseDouble(s.nextLine());
-				d = new ThresholdDiscount(t, dis);
+				var t = Double.parseDouble(scanner.nextLine());
+				var dis = Double.parseDouble(scanner.nextLine());
+				discount = new ThresholdDiscount(t, dis);
 			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		} catch (Exception exception) {
+			System.out.println(exception.getMessage());
 		}
 		
-		return d;
+		return discount;
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent itemEvent) {
+		// If discount strategy is changed.
+		if(itemEvent.getStateChange() == 1){
+			// Discount type.
+			var discountType = (DiscountType) discountComboBox.getSelectedItem();
+			// Enable/disable fields based on discount type.
+			percentageSpinner.setEnabled((discountType == DiscountType.Percentage));
+			thresholdSpinner.setEnabled((discountType == DiscountType.Threshold));
+			discountSpinner.setEnabled((discountType == DiscountType.Threshold));
+		}
 	}
 }
