@@ -21,12 +21,6 @@ public class ThresholdDiscount implements Discount{
 		return price;
 	}
 
-	// Calculates amount of discount (if any).
-	@Override
-	public double getDiscount(double price) {
-		return (price >= threshold) ? discount : 0;
-	}
-
 	public double getThreshold() {
 		return threshold;
 	}

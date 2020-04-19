@@ -13,13 +13,7 @@ public class PercentageDiscount implements Discount{
     // Calculates price after discount (if any). 
     @Override
     public double getTotal(double price){
-        return (price - getDiscount(price));
-    }
-    
-    // Calculates amount of discount (if any).
-    @Override
-    public double getDiscount(double price){
-    	return (rate * price);
+        return (price - (price * rate));
     }
 
 	public double getRate() {

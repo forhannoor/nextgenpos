@@ -32,6 +32,11 @@ public class POSWindow extends JFrame implements ActionListener{
 	private SaleConduct saleConduct;
 	private Vat vat;
 	private int salesLineRowCount;
+	private double priceWithoutDiscount;
+	private double priceWithDiscount;
+	private double discountAmount;
+	private double vatAmount;
+	private double netAmount;
 	
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
@@ -209,35 +214,33 @@ public class POSWindow extends JFrame implements ActionListener{
 					var salesLineItem = new SalesLineItem(product, Double.parseDouble(quantitySpinner.getValue().toString()));
 					saleConduct.addSalesLineItem(salesLineItem);
 					// Display saleslineitem.
-					salesLineTable.setValueAt(salesLineRowCount + 1 + "", salesLineRowCount, 0);
+					salesLineTable.setValueAt(salesLineRowCount + 1 + BLANK, salesLineRowCount, 0);
 					salesLineTable.setValueAt(salesLineItem.getProduct().getName(), salesLineRowCount, 1);
 					salesLineTable.setValueAt(salesLineItem.getProduct().getVendorId(), salesLineRowCount, 2);
 					salesLineTable.setValueAt(salesLineItem.getQuantity(), salesLineRowCount, 3);
 					salesLineTable.setValueAt(salesLineItem.getSubTotal(), salesLineRowCount, 4);
 					++salesLineRowCount;
-					// Update total.
-					var tempTotal = Double.parseDouble(totalField.getText());
-					tempTotal += salesLineItem.getSubTotal();
-					totalField.setText(tempTotal + BLANK);
-					// Update discount.
+					// Total price without discount.
+					priceWithoutDiscount = Double.parseDouble(totalField.getText()) + salesLineItem.getSubTotal(); 
+					totalField.setText(priceWithoutDiscount + BLANK);
+					// Get discount type.
 					Discount discount = saleConduct.getStrategy();
-					double d = tempTotal; // if no discount is applicable
+					// Total price with discount.
+					priceWithDiscount = priceWithoutDiscount;
 					
-					if(discount != null){ // if discount is applicable
-						d = discount.getDiscount(tempTotal);
+					// If discount is set.
+					if(discount != null){
+						priceWithDiscount = discount.getTotal(priceWithoutDiscount);
 					}
 					
-					discountField.setText(d + BLANK);
-					// Update VAT.
-					double basePrice = tempTotal;
-					double discountedPrice = d;
-					Vat v = new Vat(10);
-					double baseVat = v.calculateVat(basePrice);
-					double discountedVat = v.calculateVat(discountedPrice);
-					double netVat = baseVat - discountedVat;
-					vatField.setText(netVat + BLANK);
-					double net = tempTotal + netVat - d;
-					netTotalField.setText(net + BLANK);
+					// Discount amount.
+					discountAmount = priceWithoutDiscount - priceWithDiscount;
+					discountField.setText(discountAmount + BLANK);
+					// Calculate VAT.
+					vatAmount = vat.calculateVat(priceWithDiscount);
+					vatField.setText(vatAmount + BLANK);
+					netAmount = priceWithDiscount + vatAmount;
+					netTotalField.setText(netAmount + BLANK);
 				}
 				
 				// If no matching record is found.
