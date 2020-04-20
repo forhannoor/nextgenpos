@@ -1,4 +1,4 @@
-// Program that provides GUI for all operations.
+// GUI for main program.
 
 package nextgenpos;
 
@@ -8,7 +8,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //import java.awt.event.FocusEvent;
 //import java.awt.event.FocusListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 //import javax.swing.table.DefaultTableModel;
 //import javax.swing.table.TableColumn;
@@ -31,6 +45,7 @@ public class POSWindow extends JFrame implements ActionListener{
 	private ProductDatabase productDatabase;
 	private SaleConduct saleConduct;
 	private Vat vat;
+	private DiscountWindow discountWindow;
 	private int salesLineRowCount;
 	private double priceWithoutDiscount;
 	private double priceWithDiscount;
@@ -74,7 +89,7 @@ public class POSWindow extends JFrame implements ActionListener{
 		menubar = new JMenuBar();
 		discountMenu = new JMenu(OPTION);
 		updateDiscountStrategyItem = new JMenuItem(UPDATE_DISCOUNT_OPTION);
-		updateDiscountStrategyItem.addActionListener(e -> { new DiscountWindow(); });
+		updateDiscountStrategyItem.addActionListener(e -> { discountWindow = new DiscountWindow(); });
 		discountMenu.add(updateDiscountStrategyItem);
 		updateVatItem = new JMenuItem(UPDATE_VAT);
 		updateVatItem.addActionListener(e -> {
@@ -188,14 +203,14 @@ public class POSWindow extends JFrame implements ActionListener{
 				// Clear sales line items.
 				saleConduct.clearSalesLineItems();
 				// Update discount strategy.
-				saleConduct.setStrategy(DiscountWindow.getStrategy());
+				saleConduct.setStrategy(discountWindow.getDiscountStrategy());
 			}
 			
 			// If ending sale.
 			else{
 				// Update button label.
 				saleToggleButton.setText(START_SALE);
-				new Payment(Double.parseDouble(netTotalField.getText()));
+				new PaymentWindow(Double.parseDouble(netTotalField.getText()));
 			}
 			
 			// Clear fields.

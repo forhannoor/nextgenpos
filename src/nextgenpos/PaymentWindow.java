@@ -8,7 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 enum PaymentMethod{
 	None,
@@ -16,7 +21,7 @@ enum PaymentMethod{
 	Card
 }
 
-public class Payment extends JFrame implements ActionListener, ItemListener{
+public class PaymentWindow extends JFrame implements ActionListener, ItemListener{
 	private JComboBox<PaymentMethod> paymentMethodsComboBox;
 	private JTextField cardNoField;
 	private JTextField dueField;
@@ -39,7 +44,7 @@ public class Payment extends JFrame implements ActionListener, ItemListener{
 	private final String CHANGE_MESSAGE = "Change to return: ";
 	private final String INVALID_CARD_MESSAGE = "Invalid Card Number!";
 	
-	public Payment(double dueAmount){
+	public PaymentWindow(double dueAmount){
 		setLayout(new GridLayout(6, 2));
 		paymentMethodsComboBox = new JComboBox<PaymentMethod>(PaymentMethod.values());
 		paymentMethodsComboBox.addItemListener(this);
