@@ -32,6 +32,7 @@ public class PaymentWindow extends JFrame implements ActionListener, ItemListene
 	private final int WIDTH = 500;
 	private final int HEIGHT = 500;
 	private final int LOCATION = 100;
+	private final int VALID_CARD_LENGTH = 16;
 	private final String BLANK = "";
 	private final String CARD_NO = "Card No.";
 	private final String DUE = "Due";
@@ -113,7 +114,7 @@ public class PaymentWindow extends JFrame implements ActionListener, ItemListene
 				var cardNo = cardNoField.getText();
 				
 				// If card no is valid.
-				if(cardNo.length() == 16){
+				if(cardNo.length() == VALID_CARD_LENGTH){
 					JOptionPane.showMessageDialog(null, TRANSACTION_SUCCESS_MESSAGE);
 					// Insert sale record into database.
 					var sale = new Sale(BLANK, due);
