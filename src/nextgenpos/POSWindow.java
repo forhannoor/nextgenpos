@@ -52,6 +52,7 @@ public class POSWindow extends JFrame implements ActionListener{
 	private double discountAmount;
 	private double vatAmount;
 	private double netAmount;
+	private double total;
 	
 	private final int WIDTH = 1024;
 	private final int HEIGHT = 768;
@@ -89,7 +90,8 @@ public class POSWindow extends JFrame implements ActionListener{
 		menubar = new JMenuBar();
 		discountMenu = new JMenu(OPTION);
 		updateDiscountStrategyItem = new JMenuItem(UPDATE_DISCOUNT_OPTION);
-		updateDiscountStrategyItem.addActionListener(e -> { discountWindow = new DiscountWindow(); });
+		discountWindow = new DiscountWindow();
+		updateDiscountStrategyItem.addActionListener(e -> { discountWindow.showDialog(); });
 		discountMenu.add(updateDiscountStrategyItem);
 		updateVatItem = new JMenuItem(UPDATE_VAT);
 		updateVatItem.addActionListener(e -> {
@@ -226,7 +228,8 @@ public class POSWindow extends JFrame implements ActionListener{
 				// If matching record is found.
 				if(product != null){
 					// Add product to saleslineitem list.
-					var salesLineItem = new SalesLineItem(product, Double.parseDouble(quantitySpinner.getValue().toString()));
+					var salesLineItem = new SalesLineItem(product, Double.parseDouble(quantitySpinner.getValue()
+							.toString()));
 					saleConduct.addSalesLineItem(salesLineItem);
 					// Display saleslineitem.
 					salesLineTable.setValueAt(salesLineRowCount + 1 + BLANK, salesLineRowCount, 0);
@@ -236,7 +239,8 @@ public class POSWindow extends JFrame implements ActionListener{
 					salesLineTable.setValueAt(salesLineItem.getSubTotal(), salesLineRowCount, 4);
 					++salesLineRowCount;
 					// Total price without discount.
-					priceWithoutDiscount = Double.parseDouble(totalField.getText()) + salesLineItem.getSubTotal(); 
+					total += salesLineItem.getSubTotal();
+					priceWithoutDiscount = total;
 					totalField.setText(priceWithoutDiscount + BLANK);
 					// Get discount type.
 					Discount discount = saleConduct.getStrategy();
@@ -276,6 +280,7 @@ public class POSWindow extends JFrame implements ActionListener{
 	// Clears textfields associated with sale.
 	public void resetFields(){
 		var clearText = ZERO + BLANK;
+		total = 0;
 		totalField.setText(clearText);
 		vatField.setText(clearText);
 		discountField.setText(clearText);

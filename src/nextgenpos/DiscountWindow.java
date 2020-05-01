@@ -58,9 +58,12 @@ public class DiscountWindow extends JFrame implements ActionListener, ItemListen
 		add(updateButton);
 		setSize(SIZE, SIZE);
 		setTitle(TITLE);
-		setVisible(true);
 		setLocation(LOCATION, LOCATION);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	}
+	
+	public void showDialog() {
+		setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent actionEvent) {
